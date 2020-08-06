@@ -5,6 +5,8 @@ import { useQuery, useMutation } from "@apollo/client";
 import { FaRegEdit, FaExternalLinkAlt } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import { deleteNoteMutation } from "../../queries";
+import toast from "toasted-notes";
+import "toasted-notes/src/styles.css";
 import "./getNotes.css";
 
 export default function GetNotes(props) {
@@ -15,7 +17,7 @@ export default function GetNotes(props) {
         return <p className="load">Loading...</p>;
     }
     if (error) {
-        return <p>An error occured!</p>;
+        return toast.notify("An error occured!");
     }
 
     const deleteNoteId = async (id) => {

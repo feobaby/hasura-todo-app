@@ -38,7 +38,7 @@ _Copy the graphql url as we will be uisng it during the course of this tutorial.
 
 Once the react application has been created, it automatically installs the basic tools needed to start a new react app. You can check it by using: `npm run start`
 
-## Step 3:
+## Step 2:
 
 #### Creating basic folders
 
@@ -46,7 +46,7 @@ In the *src* folder, create new folders called: _components_ and _queries_ .
 
 Also, in the already created _components_ folder, create other folders called: _add-notes_, _get-notes_, _get-single-note_, _edit-note_
 
-## Step 4:
+## Step 3:
 
 #### Set up apollo client in the react app
 
@@ -82,7 +82,7 @@ export default App;
 - `InMemoryCache` was also added as a property to cache queries. As seen from the docs: _enables     the client to respond to future queries for the same data without sending unnecessary network        requests._
 - The component(s) routes will be wrapped in `ApolloProvider` which enables you to access the client from anywhere.
 
-## Step 5:
+## Step 4:
 
 <h2 align="center">Creating the components</h2>
 
@@ -110,7 +110,7 @@ export const insertNoteMutation = gql`
 *Note:*
 
 - `gql` is imported from the apollo client used in parsing a string into a document
-- the `insertNoteMutation` is a function created to modify the data in the database and return some values using the graphql `mutation query` and the prefix `insert` for the table `notes`
+- the `insertNoteMutation` is a function created to create/modify the data in the database and return some values using the graphql `mutation query` and the prefix `insert` for the table `notes`
 
 In the _add-notes_ folder, create a file called `addNote.jsx` and add the following code:
 
@@ -199,7 +199,7 @@ _quick-note: hooks allow us to define states without using a class._
 - declaration of all the state variables
 - a function called `handleSubmit` is created to destructure objects(variables) from the `insertNote` state, remember that the `insertNote` state was already assigned to the imported function `insertNoteMutation`
 - `react toast notify` is used in both handling successful and error messages
-- finally in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
+- finally, in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
 
 Create another file called `addNote.css` and add the following code to style the page:
 
@@ -262,3 +262,460 @@ ul {
 ```
 
 <hr>
+
+2. <h4><ins>Getting all notes:</ins></h4>
+
+In the file called `index.js` in the _queries_ folder, add the following code:
+
+```
+export const getNotesQuery = gql`
+query {
+  notes(order_by: { createdOn: desc }) {
+    id
+    name
+  }
+}
+`;
+```
+
+*Note:*
+
+- the `getNotesQuery` is a function created to retrieve the data of the specified variables in the database using the graphql `query`
+
+Also add:
+
+```
+export const deleteNoteMutation = gql`
+mutation($id: Int!) {
+  delete_notes (
+      where: {id: {_eq: $id}}
+  ){
+     affected_rows
+  }
+} 
+`;
+```
+
+*Note:*
+
+- the `deleteNoteMutation` is a function created to remove the specified data(id) in the database using the graphql `mutation query`
+
+In the _get-notes_ folder, create a file called `getNotes.jsx` and add the following code:
+
+```
+import React from "react";
+import { Link } from "react-router-dom";
+import { getNotesQuery } from "../../queries/index";
+import { useQuery, useMutation } from "@apollo/client";
+import { FaRegEdit, FaExternalLinkAlt } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
+import { deleteNoteMutation } from "../../queries";
+import toast from "toasted-notes";
+import "toasted-notes/src/styles.css";
+import "./getNotes.css";
+
+export default function GetNotes(props) {
+    const [deleteNote] = useMutation(deleteNoteMutation);
+    const { error, loading, data }
+        = useQuery(getNotesQuery)
+    if (loading) {
+        return <p className="load">Loading...</p>;
+    }
+    if (error) {
+        return toast.notify("An error occured!");
+    }
+
+    const deleteNoteId = async (id) => {
+        await deleteNote({
+            variables: { id }
+        });
+        props.history.push("/notes");
+        window.location.reload();
+    }
+
+    return (
+        <div >
+            <p className="title">All notes.</p>
+            {data.notes.map((item) =>
+                <div key={item.id} className="list-head">
+                    <ul className="list-items">
+                        <Link className="item-link"
+                            to={{
+                                pathname:
+                                    `/notes/${item.id}`
+                            }} ><FaExternalLinkAlt className="external-link" />
+                        </Link>
+                        <li className="item-name">{item.name}</li>
+                        <li>{item.description}</li>
+                        <li className="item-tag">{item.tag}</li>
+                        <li className="item-link">
+                            <Link className="item-link"
+                                to={{
+                                    pathname:
+                                        `/note/${item.id}`
+                                }} >
+                                <FaRegEdit />
+                            </Link>
+                            <MdDeleteForever className="item-link" onClick={(e) => { const r = window.confirm("Do you really want to delete this resource?"); if (r == true) deleteNoteId(item.id) }} />
+                        </li>
+                    </ul>
+                </div>)}
+        </div>
+    );
+}
+```
+*Note:*
+
+- again, required libraries are imported
+- declare the state for `deleteNote` assigned to the `deleteNoteMutation`
+- required objects were de-structured from the `getNotesQuery` query
+- a function `deleteNoteId` is created to handle the id from the variable gotten from the `deleteNote` state for deletion.
+- finally, in order to render the results, a `return` function is declared by creating a list and the values rendered as mini cards.
+
+Create another file called `getNotes.css` and add the following code to style the page:
+
+```
+.external-link {
+    float: right;
+}
+
+a {
+    color: #FFF;
+}
+
+a:hover {
+    color: #000
+}
+
+.list-head {
+    color: #d9d4d4;
+    margin: 0 2.5%;
+    float: left;
+    width: 20%;
+}
+
+.list-items {
+    text-align: center;
+    border: 1px solid black;
+    list-style: none;
+    margin: 8px -16px;
+    background-color: #3b3c40;
+}
+
+
+.item-name {
+    font-size: 20px;
+}
+
+.item-tag {
+    font-size: 12px;
+    margin-top: 8%;
+}
+
+@media screen and (max-width: 900px) {
+    .list-head {
+        width: 40%;
+        margin-left: 6%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .list-head {
+        width: 90%;
+        margin-left: 5%;
+    }
+}
+```
+
+<hr>
+
+3. <h4><ins>Getting a single note:</ins></h4>
+
+In the file called `index.js` in the _queries_ folder, add the following code:
+
+```
+export const getSingleNoteQuery = gql`
+query ($id: Int!){
+  notes_by_pk(id: $id) {
+    id
+    name
+    description
+    tag
+    createdOn
+  }
+}
+`;
+```
+
+*Note:*
+
+- the `getSingleNoteQuery` is a function created to retrieve a specific data(id) of the specified variables in the database using the graphql `query`
+
+In the _get-single-note_ folder, create a file called `getSingleNote.jsx` and add the following code:
+
+```
+import React from "react";
+import { getSingleNoteQuery } from "../../queries/index";
+import { useQuery } from "@apollo/client";
+import "./getSingleNote.css";
+
+export default function GetSingleNote(props) {
+
+    const {
+        match: {
+            params: { id },
+        },
+    } = props;
+    const { error, loading, data }
+        = useQuery(getSingleNoteQuery, { variables: { id } })
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+    if (error) {
+        return <p>An Error Occured.</p>;
+    }
+    const { name, description, tag } = data.notes_by_pk;
+    console.log(name)
+
+    return (
+        <div className="single-container">
+            <p className="single-note-name">{name}</p>
+            <hr />
+            <p className="single-note-desc">{description}</p>
+            <p className="single-note-tag"><span>{tag}</span></p>
+        </div >
+    );
+}
+```
+*Note:*
+
+- again, required libraries are imported
+- required objects were de-structured from the `getSingleNoteQuery` query
+- finally, in order to render the results, a `return` function is declared by rendering the values gotten from the data object.
+
+Create another file called `getSingleNote.css` and add the following code to style the page:
+
+```
+.single-container {
+    margin-top: 15%;
+    margin: auto;
+    width: 30%;
+    padding: 50px;
+    border: 1px solid beige;
+    color: white;
+    padding-inline-start: 30px;
+}
+
+.single-note-name {
+    font-size: 30px;
+    text-align: center;
+}
+
+.single-note-desc {
+    font-size: 15px;
+    text-align: center;
+}
+
+.single-note-tag {
+    margin-top: 12%;
+    font-size: 16px;
+}
+
+.single-note-tag span {
+    background-color: purple;
+}
+
+@media screen and (max-width: 800px) {
+    .single-container {
+        display: inline-block;
+        width: 78%;
+        margin: 0 auto;
+    }
+}
+```
+
+<hr>
+
+4. <h4><ins>Updating a note:</ins></h4>
+
+In the file called `index.js` in the _queries_ folder, add the following code:
+
+```
+export const updateNoteMutation = gql`
+  mutation ($name: String!, $description: String!, $tag: String!, $id: Int!) {
+    update_notes(where: {id: {_eq: $id}}, _set: {name: $name, description: $description, tag: $tag}) {
+      affected_rows
+    }
+  }
+`;
+```
+
+*Note:*
+
+- the `updateNoteMutation` is a function created to modify the data in the database using the graphql `mutation query` and the prefix `update` for the table `notes`
+
+In the _update-note_ folder, create a file called `updateNote.jsx` and add the following code:
+
+```
+import React, { useState } from "react";
+import { updateNoteMutation } from "../../queries";
+import { useMutation } from "@apollo/client";
+import toast from "toasted-notes";
+import "toasted-notes/src/styles.css";
+
+export default function UpdateNote(props) {
+    const [loading, setLoading] = useState("");
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [tag, setTag] = useState("");
+    const [updateNote] = useMutation(updateNoteMutation);
+
+    const {
+        match: {
+            params: { id },
+        },
+    } = props;
+
+
+    const handleSubmit = async (event) => {
+        try {
+            event.preventDefault();
+            setLoading(true);
+            await updateNote({
+                variables: { id, name, description, tag }
+            });
+            props.history.push("/notes");
+            if (true) toast.notify("Successful")
+            window.location.reload();
+        } catch (error) {
+            setLoading(false);
+            if (error) toast.notify("Something went wrong. Please try again later.");
+        }
+    }
+
+    if (loading) {
+        return <p className="load">Loading...</p>
+    }
+
+    return (
+        <>
+            <p className="title">Update your note.</p>
+            <div className="container">
+                <form onSubmit={handleSubmit} align="center">
+                    <input
+                        type="text"
+                        value={name}
+                        placeholder="Name"
+                        onChange={e => setName(e.target.value)}
+                        required
+                    />
+                    <textarea
+                        type="text"
+                        value={description}
+                        placeholder="Description"
+                        onChange={e => setDescription(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="text"
+                        value={tag}
+                        placeholder="Tag"
+                        onChange={e => setTag(e.target.value)}
+                        required
+                    />
+                    <br />
+                    <input type="submit" value="update" className="button" />
+                </form>
+            </div>
+        </>
+    );
+};
+```
+*Note:*
+
+- set all the required states
+- a function called `handleSubmit` is created to destructure objects(variables) from the `updateNote` state, remember that the `updateNote` state was already assigned to the imported function `updateNoteMutation`. This function helps to modify the exsiting data.
+- finally in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
+
+<hr>
+
+Add this to `index.css` to style the overall pages:
+
+```
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background-color: #0f1012;
+}
+
+.load {
+  margin-top: 20%;
+  text-align: center;
+  font-size: 25px;
+  color: white;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px;
+  margin: 1px 0 10px 0;
+  border: 1px solid #3b3c40;
+  background: white;
+
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 1px 0 10px 0;
+  border: 1px solid #3b3c40;
+  background: white;
+
+}
+```
+
+
+<hr>
+
+## Step 5:
+
+Finally, let us create the routes in the `App.js` file and add the following code:
+
+```
+import React from "react";
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+} from "@apollo/client";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import AddNote from "./components/add-notes/addNote";
+import GetNotes from "./components/get-notes/getNotes.jsx";
+import GetSingleNote from "./components/get-single-note/getSingleNote";
+import UpdateNote from "./components/update-note/updateNote";
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: "https://casual-egret-35.hasura.app/v1/graphql",
+});
+
+function App() {
+  return (
+    <Router>
+      <Switch>
+        <ApolloProvider client={client}>
+          <Route exact path="/" component={AddNote} />
+          <Route exact path="/notes" component={GetNotes} />
+          <Route exact path="/notes/:id" component={GetSingleNote} />
+          <Route exact path="/note/:id" component={UpdateNote} />
+        </ApolloProvider>
+      </Switch>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+That marks the end of this tutorial. I hope you find it worthwhile!
