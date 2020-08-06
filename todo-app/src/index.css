@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background-color: #0f1012;
+}
+
+.load {
+  margin-top: 20%;
+  text-align: center;
+  font-size: 25px;
+  color: white;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px;
+  margin: 1px 0 10px 0;
+  border: 1px solid #3b3c40;
+  background: white;
+
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 1px 0 10px 0;
+  border: 1px solid #3b3c40;
+  background: white;
+
+}

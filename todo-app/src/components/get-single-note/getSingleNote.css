@@ -1,0 +1,36 @@
+.single-container {
+    margin-top: 15%;
+    margin: auto;
+    width: 30%;
+    padding: 50px;
+    border: 1px solid beige;
+    color: white;
+    padding-inline-start: 30px;
+}
+
+.single-note-name {
+    font-size: 30px;
+    text-align: center;
+}
+
+.single-note-desc {
+    font-size: 15px;
+    text-align: center;
+}
+
+.single-note-tag {
+    margin-top: 12%;
+    font-size: 16px;
+}
+
+.single-note-tag span {
+    background-color: purple;
+}
+
+@media screen and (max-width: 800px) {
+    .single-container {
+        display: inline-block;
+        width: 78%;
+        margin: 0 auto;
+    }
+}

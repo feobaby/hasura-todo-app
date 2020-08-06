@@ -1,0 +1,50 @@
+.external-link {
+    float: right;
+}
+
+a {
+    color: #FFF;
+}
+
+a:hover {
+    color: #000
+}
+
+.list-head {
+    color: #d9d4d4;
+    margin: 0 2.5%;
+    float: left;
+    width: 20%;
+}
+
+.list-items {
+    text-align: center;
+    border: 1px solid black;
+    list-style: none;
+    margin: 8px -16px;
+    background-color: #3b3c40;
+}
+
+
+.item-name {
+    font-size: 20px;
+}
+
+.item-tag {
+    font-size: 12px;
+    margin-top: 8%;
+}
+
+@media screen and (max-width: 900px) {
+    .list-head {
+        width: 40%;
+        margin-left: 6%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .list-head {
+        width: 90%;
+        margin-left: 5%;
+    }
+}
