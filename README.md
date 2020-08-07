@@ -1,16 +1,89 @@
-<h2> A Comprehensive Tutorial on How to Get Started with Hasura and Create a Todo Notes App.</h2>
+<h2> A Comprehensive Tutorial on How to Get Started with Hasura GraphQl and Create a Todo Notes App.</h2>
 
-<ins>**Short Note:**</ins> I discovered the Hasura Graphql Engine when I joined an organization earlier this year.  We were about to migrate the microservices architecture we had for our systems into a mono repo and we were looking for something very fast and flexible. Voila, we picked up Hasura!
+<h3> Table of Contents</h3>
 
-<ins>**What exactly is Hasura and what makes it very different?**</ins>
-Hasura is a very fast Graphql server that gives you an instant and real-time GraphQL APIs. Bascially, the aim is to make application development easy. 
-Traditionally, before a frontend app can be created, backend APIs have to be created first which makes the proccess kind of two-dimensional _or more_ and longer, but Hasura solves it in a one-dimensional way where by graphql Apis can be created alongside rendering the UI.
+1. [Overview](#Overview)
+    1. [Short Note](#note)
+    2. [About Hasura](#reason)
+    3. [A Little Bit About GraphQl](#graphql)
+2. [Technologies](#Technologies)
+    1. [Technologies used](#tech)
+3. [Tools that Need to be Installed](#tools)
+4. [Folder Structure](#folder)
+5. [Configure the Apollo Client](#config)
+5. [Creating the Components](#components)
+   1. [Create a Note](#add-note)
+       1. [Create the Mutation for creating a note](#add-note-query)
+       2. [Create the `CreateNote` functional component](#add-note-jsx)
+       3. [Styling the `CreateNote` page](#add-note-css)
+   2. [Getting all Notes](#get-notes)
+       1. [Create the Query for getting all notes](#get-notes-query)
+       2. [Create the Mutation Query for deleting a note](#delete-note-query)
+       3. [Create the `GetNotes` functional component](#get-notes-jsx)
+       4. [Styling the `GetNotes` page](#get-notes-css)
+   3. [Getting a Note](#get-single-note)
+       1. [Create the Query for getting a single note](#get-single-note-query)
+       2. [Create the `GetSingleNote` functional component](#get-single-note-jsx)
+       4. [Styling the `GetSingleNotes` page](#get-single-note-css)
+   4. [Update a Note](#update-note)
+       1. [Create the Query for updating a note](#update-note-query)
+       2. [Update the `UpdateNote` functional component](#update-note-jsx)
+6. [Adding the overall style in `index.css`](#index-css)
+7. [Adding the routes functionality](#routes)
+
+
+### Overview
+
+#### <ins>Short Note:</ins> <a name="note"></a>
+I discovered the Hasura Graphql Engine when I joined an organization earlier this year.  We were about to migrate the microservices architecture we had for our systems into a mono repo and we were looking for something very fast and flexible. Voila, we picked up Hasura!
+
+#### <ins>What exactly is Hasura and what makes it very different?</ins> <a name="reason"></a>
+Hasura is a very fast Graphql server that gives you an instant and real-time GraphQL APIs. Basically, the aim is to make application development easy. 
+Traditionally, before a frontend app can be created, backend APIs have to be created first which makes the process kind of two-dimensional _or more_ and longer, but Hasura solves it in a one-dimensional way whereby Apis can be created alongside rendering the UI and data can be stored in one environment coupled with the ease of using GraphQl for its API architecture flexibility.
+
+#### <ins>Understanding Core GraphQl Concepts that will be used during the course of this tutorial:</ins> <a name="graphql"></a>
+##### <ins>The Schema Definition Language (SDL):</ins>  
+This concept is used to define the schema of an API; for example - a simple type `Person`
+
+```
+type Person {
+  name: String!
+  age: Int!
+}
+```
+
+##### <ins>A fixed endpoint:</ins>
+GraphQl uses a fixed endpoint unlike how the Rest API architecture is structured in a way that a _specific _set of information is meant to be returned from a/some _specific_ endpoint(s). The structure of the data that is returned from a GraphQl API is not fixed. It is flexible and the client can decide exactly what data is needed.
+
+##### <ins>Queries:</ins>
+an example is:
+```
+type Query {
+  notes {
+    title
+  }
+}
+```
+- `notes` represent the root of a query while the `title` represent a query's payload. Most times, the root of the query represents a db table.
+- `query` allows a client to fetch data in a requests.
+
+##### <ins>Mutations:</ins>
+an example is:
+```
+type Mutation {
+  notes(title: String!)
+}
+```
+- `mutation` modifies the data in the data store and returns a value.
+- In the code above, it takes in an argument `title` recognized as a string
 
 <hr>
 
 **Let us get started:**
 
-The technologies that will be used in creating this app are: 
+### Technologies
+
+The technologies that will be used in creating this app are: <a name="tech"></a>
 
 - Node.js (make sure this is installed)
 - ReactJs
@@ -21,16 +94,16 @@ Firstly, since we are using the `Hasura Graphql Engine`, we have to create a gra
 
 Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku).  After that, your graphql playground is all set up! Click on `launch console` to view it.
 
-_Copy the graphql url as we will be uisng it during the course of this tutorial._
+_Copy the graphql url as we will be using it during the course of this tutorial._
 
 <hr>
 
-## Step 1:
+## Step 1: <a name="tools"></a>
 
-#### Some tools/libraries need to be installed
+#### Some tools/libraries need to be installed 
 
 - `npx create-react-app todo-app` - to quickly create a new react app into a folder called `todo-app`   and save you from a time-consuming setup and configuration process.
-- `npm install react-router-dom -S` - a tool that allows you to handle routing in your react           application.
+- `npm install react-router-dom -S` - a tool that allows you to handle routing in your react application.
 - `npm install @apollo/client -S` - a state management library that allows you manage both local and    remote data with graphql.
 - `npm install graphql -S` - a tool that allows you build a graphql schema and serve queries against that schema.
 - `npm install react-icons --save-dev` - a tool that allows you to import and make use of free icons.
@@ -38,15 +111,15 @@ _Copy the graphql url as we will be uisng it during the course of this tutorial.
 
 Once the react application has been created, it automatically installs the basic tools needed to start a new react app. You can check it by using: `npm run start`
 
-## Step 2:
+## Step 2: <a name="folder"></a>
 
-#### Creating basic folders
+#### Creating basic folders 
 
 In the *src* folder, create new folders called: _components_ and _queries_ .
 
 Also, in the already created _components_ folder, create other folders called: _add-notes_, _get-notes_, _get-single-note_, _edit-note_
 
-## Step 3:
+## Step 3: <a name="config"></a>
 
 #### Set up apollo client in the react app
 
@@ -62,7 +135,7 @@ import {
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "https://casual-egret-35.hasura.app/v1/graphql",
+  uri: "https://casual-egret-35.hasura.app/v1/graphql", // you can use your own `uri` if you like!
 });
 
 function App() {
@@ -84,11 +157,13 @@ export default App;
 
 ## Step 4:
 
-<h2 align="center">Creating the components</h2>
+### Creating the components <a name="components"></a>
 
-1. <h4><ins>Creating a note:</ins></h4>
+1. #### <ins>Creating a note:</ins> <a name="add-note"></a>
 
-In the _queries_ folder, create a file called `index.js` and add the following code:
+In the _queries_ folder, create a file called `index.js` and add the following code: 
+
+##### A query to add a note <a name="add-note-query"></a>
 
 ```
 import { gql } from "@apollo/client";
@@ -112,7 +187,7 @@ export const insertNoteMutation = gql`
 - `gql` is imported from the apollo client used in parsing a string into a document
 - the `insertNoteMutation` is a function created to create/modify the data in the database and return some values using the graphql `mutation query` and the prefix `insert` for the table `notes`
 
-In the _add-notes_ folder, create a file called `addNote.jsx` and add the following code:
+In the _add-notes_ folder, create a file called `addNote.jsx` and add the following code: <a name="add-note-jsx"></a>
 
 ```
 import React, { useState } from "react";
@@ -201,7 +276,7 @@ _quick-note: hooks allow us to define states without using a class._
 - `react toast notify` is used in both handling successful and error messages
 - finally, in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
 
-Create another file called `addNote.css` and add the following code to style the page:
+Create another file called `addNote.css` and add the following code to style the page: <a name="add-note-css"></a>
 
 ```
 .container {
@@ -263,9 +338,11 @@ ul {
 
 <hr>
 
-2. <h4><ins>Getting all notes:</ins></h4>
+2. #### <ins>Getting all notes:</ins> <a name="get-notes"></a> 
 
-In the file called `index.js` in the _queries_ folder, add the following code:
+In the file called `index.js` in the _queries_ folder, add the following code: 
+
+##### A query to get all notes <a name="get-notes-query"></a>
 
 ```
 export const getNotesQuery = gql`
@@ -282,7 +359,9 @@ query {
 
 - the `getNotesQuery` is a function created to retrieve the data of the specified variables in the database using the graphql `query`
 
-Also add:
+Also add:  x
+
+##### A query to delete a note <a name="get-notes-query"></a>
 
 ```
 export const deleteNoteMutation = gql`
@@ -300,7 +379,7 @@ mutation($id: Int!) {
 
 - the `deleteNoteMutation` is a function created to remove the specified data(id) in the database using the graphql `mutation query`
 
-In the _get-notes_ folder, create a file called `getNotes.jsx` and add the following code:
+In the _get-notes_ folder, create a file called `getNotes.jsx` and add the following code: <a name="get-notes-jsx"></a>
 
 ```
 import React from "react";
@@ -372,7 +451,7 @@ export default function GetNotes(props) {
 - a function `deleteNoteId` is created to handle the id from the variable gotten from the `deleteNote` state for deletion.
 - finally, in order to render the results, a `return` function is declared by creating a list and the values rendered as mini cards.
 
-Create another file called `getNotes.css` and add the following code to style the page:
+Create another file called `getNotes.css` and add the following code to style the page: <a name="get-notes-css"></a>
 
 ```
 .external-link {
@@ -429,9 +508,11 @@ a:hover {
 
 <hr>
 
-3. <h4><ins>Getting a single note:</ins></h4>
+3. #### <ins>Getting a single note:</ins> <a name="get-single-note"></a>
 
 In the file called `index.js` in the _queries_ folder, add the following code:
+
+##### A query to get a single note <a name="get-single-note-query"></a>
 
 ```
 export const getSingleNoteQuery = gql`
@@ -451,7 +532,7 @@ query ($id: Int!){
 
 - the `getSingleNoteQuery` is a function created to retrieve a specific data(id) of the specified variables in the database using the graphql `query`
 
-In the _get-single-note_ folder, create a file called `getSingleNote.jsx` and add the following code:
+In the _get-single-note_ folder, create a file called `getSingleNote.jsx` and add the following code: <a name="get-single-note-jsx"></a>
 
 ```
 import React from "react";
@@ -493,7 +574,7 @@ export default function GetSingleNote(props) {
 - required objects were de-structured from the `getSingleNoteQuery` query
 - finally, in order to render the results, a `return` function is declared by rendering the values gotten from the data object.
 
-Create another file called `getSingleNote.css` and add the following code to style the page:
+Create another file called `getSingleNote.css` and add the following code to style the page: <a name="get-single-note-css"></a>
 
 ```
 .single-container {
@@ -536,9 +617,11 @@ Create another file called `getSingleNote.css` and add the following code to sty
 
 <hr>
 
-4. <h4><ins>Updating a note:</ins></h4>
+4. #### <ins>Updating a note:</ins> <a name="update-note"></a> <a name="update-note"></a>
 
 In the file called `index.js` in the _queries_ folder, add the following code:
+
+##### A query to update a note <a name="update-note-query"></a>
 
 ```
 export const updateNoteMutation = gql`
@@ -554,7 +637,7 @@ export const updateNoteMutation = gql`
 
 - the `updateNoteMutation` is a function created to modify the data in the database using the graphql `mutation query` and the prefix `update` for the table `notes`
 
-In the _update-note_ folder, create a file called `updateNote.jsx` and add the following code:
+In the _update-note_ folder, create a file called `updateNote.jsx` and add the following code: <a name="update-note-jsx"></a>
 
 ```
 import React, { useState } from "react";
@@ -639,7 +722,7 @@ export default function UpdateNote(props) {
 
 <hr>
 
-Add this to `index.css` to style the overall pages:
+Add this to `index.css` to style the overall pages: <a name="index-css"></a>
 
 ```
 @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
@@ -717,5 +800,24 @@ function App() {
 
 export default App;
 ```
+*Note:*
 
-That marks the end of this tutorial. I hope you find it worthwhile!
+- The functions are imported and passed in as an object in different routes.
+- `The ApolloProvider` wraps up all the routes.
+
+<hr>
+
+Run `npm start` to start the server and the routes should be able to function in your browser.
+
+The routes. <a name="routes"></a>
+
+| Routes                   | Description             |
+| ------------------------ | ----------------------- |
+| localhost:3000           | A form to add a note    |
+| localhost:3000/notes     | All notes ever created  |
+| localhost:3000/notes/:id | A single note           |
+| localhost:3000/note/:id  | A form to update a note |
+
+_There is no route for the delete option but it(delete) acts as a button function on the `get all notes` route._
+
+**That marks the end of this tutorial. I hope you find it worthwhile!** :heart:
