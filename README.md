@@ -53,8 +53,7 @@ type Person {
 ```
 
 ##### <ins>A fixed endpoint:</ins>
-GraphQl uses a fixed endpoint unlike how the Rest API architecture is structured in a way to have _specific_ endpoints. A rest API endpoint is structured in a way such that a speciifc set of infomration is meant to be returned. That is exactly what makes it different from GraphQl, - _the structure of the data that is returned is not fixed._
-It is flexible and the client can decide exactly what data is needed.
+GraphQl uses a fixed endpoint unlike how the Rest API architecture is structured in a way that a _specific _set of information is meant to be returned from a/some _specific_ endpoint(s). The structure of the data that is returned from a GraphQl API is not fixed. It is flexible and the client can decide exactly what data is needed.
 
 ##### <ins>Queries:</ins>
 an example is:
@@ -95,7 +94,7 @@ Firstly, since we are using the `Hasura Graphql Engine`, we have to create a gra
 
 Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku).  After that, your graphql playground is all set up! Click on `launch console` to view it.
 
-_Copy the graphql url as we will be uisng it during the course of this tutorial._
+_Copy the graphql url as we will be using it during the course of this tutorial._
 
 <hr>
 
@@ -136,7 +135,7 @@ import {
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "https://casual-egret-35.hasura.app/v1/graphql",
+  uri: "https://casual-egret-35.hasura.app/v1/graphql", // you can use your own `uri` if you like!
 });
 
 function App() {
