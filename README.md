@@ -8,10 +8,12 @@
     3. [A Little Bit About GraphQl](#graphql)
 2. [Technologies](#Technologies)
     1. [Technologies used](#tech)
+    2. [Creating a GraphQl endpoint](#gql)
+    3. [Schema creation](#schema)
 3. [Tools that Need to be Installed](#tools)
 4. [Folder Structure](#folder)
 5. [Configure the Apollo Client](#config)
-5. [Creating the Components](#components)
+6. [Creating the Components](#components)
    1. [Create a Note](#add-note)
        1. [Create the Mutation for creating a note](#add-note-query)
        2. [Create the `CreateNote` functional component](#add-note-jsx)
@@ -24,12 +26,12 @@
    3. [Getting a Note](#get-single-note)
        1. [Create the Query for getting a single note](#get-single-note-query)
        2. [Create the `GetSingleNote` functional component](#get-single-note-jsx)
-       4. [Styling the `GetSingleNotes` page](#get-single-note-css)
+       3. [Styling the `GetSingleNotes` page](#get-single-note-css)
    4. [Update a Note](#update-note)
        1. [Create the Query for updating a note](#update-note-query)
        2. [Update the `UpdateNote` functional component](#update-note-jsx)
-6. [Adding the overall style in `index.css`](#index-css)
-7. [Adding the routes functionality](#routes)
+7. [Adding the overall style in `index.css`](#index-css)
+8. [Adding the routes functionality](#routes)
 
 
 ### Overview
@@ -53,7 +55,7 @@ type Person {
 ```
 
 ##### <ins>A fixed endpoint:</ins>
-GraphQl uses a fixed endpoint unlike how the Rest API architecture is structured in a way that a _specific _set of information is meant to be returned from a/some _specific_ endpoint(s). The structure of the data that is returned from a GraphQl API is not fixed. It is flexible and the client can decide exactly what data is needed.
+GraphQl uses a fixed endpoint unlike how the Rest API architecture is structured in a way that a _specific _ set of information is meant to be returned from a/some _specific_ endpoint(s). The structure of the data that is returned from a GraphQl API is not fixed. It is flexible and the client can decide exactly what data is needed.
 
 ##### <ins>Queries:</ins>
 an example is:
@@ -65,7 +67,7 @@ type Query {
 }
 ```
 - `notes` represent the root of a query while the `title` represent a query's payload. Most times, the root of the query represents a db table.
-- `query` allows a client to fetch data in a requests.
+- `query` allows a client to fetch data in a request.
 
 ##### <ins>Mutations:</ins>
 an example is:
@@ -75,7 +77,7 @@ type Mutation {
 }
 ```
 - `mutation` modifies the data in the data store and returns a value.
-- In the code above, it takes in an argument `title` recognized as a string
+- In the code above, it takes in an argument `title` recognized as a string.
 
 <hr>
 
@@ -90,9 +92,14 @@ The technologies that will be used in creating this app are: <a name="tech"></a>
 - Hasura
 - Postgres
 
+Create GraphQl endpoint <a name="gql"></a>
+
 Firstly, since we are using the `Hasura Graphql Engine`, we have to create a graphql endpoint through Hasura cloud. Head off to [https://hasura.io/](https://hasura.io/) to create an account, if you don't have one. 
 
-Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku).  After that, your graphql playground is all set up! Click on `launch console` to view it.
+Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku). After that, your graphql playground is all set up! Click on `launch console` to view it.
+
+Create your schema like below: <a name="schema"></a>
+
 
 _Copy the graphql url as we will be using it during the course of this tutorial._
 
@@ -104,7 +111,7 @@ _Copy the graphql url as we will be using it during the course of this tutorial.
 
 - `npx create-react-app todo-app` - to quickly create a new react app into a folder called `todo-app`   and save you from a time-consuming setup and configuration process.
 - `npm install react-router-dom -S` - a tool that allows you to handle routing in your react application.
-- `npm install @apollo/client -S` - a state management library that allows you manage both local and    remote data with graphql.
+- `npm install @apollo/client -S` - a state management library that allows you manage both local and remote data with graphql.
 - `npm install graphql -S` - a tool that allows you build a graphql schema and serve queries against that schema.
 - `npm install react-icons --save-dev` - a tool that allows you to import and make use of free icons.
 - `npm install toasted notes react spring --save-dev` - a tool for rendering alerts and messages.
@@ -117,7 +124,7 @@ Once the react application has been created, it automatically installs the basic
 
 In the *src* folder, create new folders called: _components_ and _queries_ .
 
-Also, in the already created _components_ folder, create other folders called: _add-notes_, _get-notes_, _get-single-note_, _edit-note_
+Also, in the already created _components_ folder, create other folders called: _add-notes_, _get-notes_, _get-single-note_, _update-note_
 
 ## Step 3: <a name="config"></a>
 
@@ -152,7 +159,7 @@ export default App;
 
 - `ApolloClient`, `InMemoryCache` and `ApolloProvider` are imported from the Apollo client library.
 - A new Apollo client contructor is configured and the GraphQL server's URL is added as a property.
-- `InMemoryCache` was also added as a property to cache queries. As seen from the docs: _enables     the client to respond to future queries for the same data without sending unnecessary network        requests._
+- `InMemoryCache` was also added as a property to cache queries. As seen from the docs: _enables the client to respond to future queries for the same data without sending unnecessary network requests._
 - The component(s) routes will be wrapped in `ApolloProvider` which enables you to access the client from anywhere.
 
 ## Step 4:
@@ -184,8 +191,8 @@ export const insertNoteMutation = gql`
 
 *Note:*
 
-- `gql` is imported from the apollo client used in parsing a string into a document
-- the `insertNoteMutation` is a function created to create/modify the data in the database and return some values using the graphql `mutation query` and the prefix `insert` for the table `notes`
+- `gql` is imported from the apollo client used in parsing a string into a document.
+- The `insertNoteMutation` is a function created to create/modify the data in the database and return some values using the graphql `mutation query` and the prefix `insert` for the table `notes`.
 
 In the _add-notes_ folder, create a file called `addNote.jsx` and add the following code: <a name="add-note-jsx"></a>
 
@@ -268,13 +275,13 @@ export default function CreateNote() {
 ```
 *Note:*
 
-- the above is a functional component making use of react hooks and apollo client hooks.
-_quick-note: hooks allow us to define states without using a class._
-- required libraries are imported
-- declaration of all the state variables
-- a function called `handleSubmit` is created to destructure objects(variables) from the `insertNote` state, remember that the `insertNote` state was already assigned to the imported function `insertNoteMutation`
-- `react toast notify` is used in both handling successful and error messages
-- finally, in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
+- The above is a functional component making use of react hooks and apollo client hooks.
+_quick-note: hooks allow us to define states without writing a class._
+- Some required libraries are imported.
+- The declaration of all the state variables.
+- A function called `handleSubmit` is created to destructure objects(variables) from the `insertNote` state, remember that the `insertNote` state was already assigned to the imported function `insertNoteMutation`.
+- `react toast notify` is used in both handling successful and error messages,
+- Finally, in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
 
 Create another file called `addNote.css` and add the following code to style the page: <a name="add-note-css"></a>
 
@@ -357,11 +364,10 @@ query {
 
 *Note:*
 
-- the `getNotesQuery` is a function created to retrieve the data of the specified variables in the database using the graphql `query`
+- The `getNotesQuery` is a function created to retrieve the data of the specified variables in the database using the graphql `query`.
 
-Also add:  x
 
-##### A query to delete a note <a name="get-notes-query"></a>
+##### A query to delete a note <a name="delete-note-query"></a>
 
 ```
 export const deleteNoteMutation = gql`
@@ -445,11 +451,11 @@ export default function GetNotes(props) {
 ```
 *Note:*
 
-- again, required libraries are imported
-- declare the state for `deleteNote` assigned to the `deleteNoteMutation`
-- required objects were de-structured from the `getNotesQuery` query
-- a function `deleteNoteId` is created to handle the id from the variable gotten from the `deleteNote` state for deletion.
-- finally, in order to render the results, a `return` function is declared by creating a list and the values rendered as mini cards.
+- Some required libraries are imported.
+- Declare the state for `deleteNote` assigned to the `deleteNoteMutation`.
+- Required objects were de-structured from the `getNotesQuery` query.
+- A function `deleteNoteId` is created to handle the id from the variable gotten from the `deleteNote` state for deletion.
+- Finally, in order to render the results, a `return` function is declared by creating a list and the values rendered as mini cards.
 
 Create another file called `getNotes.css` and add the following code to style the page: <a name="get-notes-css"></a>
 
@@ -530,7 +536,7 @@ query ($id: Int!){
 
 *Note:*
 
-- the `getSingleNoteQuery` is a function created to retrieve a specific data(id) of the specified variables in the database using the graphql `query`
+- The `getSingleNoteQuery` is a function created to retrieve a specific data(id) of the specified variables in the database using the graphql `query`.
 
 In the _get-single-note_ folder, create a file called `getSingleNote.jsx` and add the following code: <a name="get-single-note-jsx"></a>
 
@@ -570,9 +576,9 @@ export default function GetSingleNote(props) {
 ```
 *Note:*
 
-- again, required libraries are imported
-- required objects were de-structured from the `getSingleNoteQuery` query
-- finally, in order to render the results, a `return` function is declared by rendering the values gotten from the data object.
+- Some required libraries are imported.
+- Required objects were de-structured from the `getSingleNoteQuery` query.
+- Finally, in order to render the results, a `return` function is declared by rendering the values gotten from the data object.
 
 Create another file called `getSingleNote.css` and add the following code to style the page: <a name="get-single-note-css"></a>
 
@@ -635,7 +641,7 @@ export const updateNoteMutation = gql`
 
 *Note:*
 
-- the `updateNoteMutation` is a function created to modify the data in the database using the graphql `mutation query` and the prefix `update` for the table `notes`
+- The `updateNoteMutation` is a function created to modify the data in the database using the graphql `mutation query` and the prefix `update` for the table `notes`.
 
 In the _update-note_ folder, create a file called `updateNote.jsx` and add the following code: <a name="update-note-jsx"></a>
 
@@ -716,9 +722,9 @@ export default function UpdateNote(props) {
 ```
 *Note:*
 
-- set all the required states
-- a function called `handleSubmit` is created to destructure objects(variables) from the `updateNote` state, remember that the `updateNote` state was already assigned to the imported function `updateNoteMutation`. This function helps to modify the exsiting data.
-- finally in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
+- Declare all the required states.
+- A function called `handleSubmit` is created to destructure objects(variables) from the `updateNote` state, remember that the `updateNote` state was already assigned to the imported function `updateNoteMutation`. This function helps to modify the exsiting data.
+- Finally in order to render the results, a `return` function is declared by creating a form and input boxes that each take in a variable/state and the `onchange` event is used when the value changes.
 
 <hr>
 
