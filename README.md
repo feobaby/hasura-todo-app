@@ -98,10 +98,13 @@ Firstly, since we are using the `Hasura Graphql Engine`, we have to create a gra
 
 Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku). After that, your graphql playground is all set up! Click on `launch console` to view it.
 
-#### <ins> Create your schema like below:</ins> <a name="schema"></a>
-![alt text](https://github.com/codeliezel/tech-writing-ass/blob/master/todo-app/public/assets/schema.PNG)
-
 _Copy the graphql url as we will be using it during the course of this tutorial._
+
+#### <ins> Create your schema like below:</ins> <a name="schema"></a>
+
+In the _data_ panel:
+
+![alt text](https://github.com/codeliezel/tech-writing-ass/blob/master/todo-app/public/assets/schema.PNG)
 
 <hr>
 
