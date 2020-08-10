@@ -92,14 +92,14 @@ The technologies that will be used in creating this app are: <a name="tech"></a>
 - Hasura
 - Postgres
 
-Create GraphQl endpoint <a name="gql"></a>
+#### <ins>Create GraphQl endpoint</ins> <a name="gql"></a>
 
 Firstly, since we are using the `Hasura Graphql Engine`, we have to create a graphql endpoint through Hasura cloud. Head off to [https://hasura.io/](https://hasura.io/) to create an account, if you don't have one. 
 
 Create a new project and click on `Try with Heroku`(which means that your database will sit on Heroku). After that, your graphql playground is all set up! Click on `launch console` to view it.
 
-Create your schema like below: <a name="schema"></a>
-
+#### <ins> Create your schema like below:</ins> <a name="schema"></a>
+![alt text](https://github.com/codeliezel/tech-writing-ass/blob/master/todo-app/public/assets/schema.PNG)
 
 _Copy the graphql url as we will be using it during the course of this tutorial._
 
